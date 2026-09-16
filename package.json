@@ -2,6 +2,7 @@
   "name": "backend-project",
   "version": "1.0.0",
   "description": "a backend at chai aur code channel - youtube",
+  "type": "module",
   "keywords": [
     "javascript",
     "backend",
@@ -9,9 +10,11 @@
   ],
   "license": "ISC",
   "author": "Alok Mishra",
-  "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev":"nodem src/index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
