@@ -5,3 +5,6 @@
 // => cd src se us folder me jao src folder name hai 
 // => ls ab lekho list create krne ke leye 
 // => touch app.js constants.js  now ab touch se create hoga file or app.js ye sb file name hain
+
+
+// database me jab bhe ap bat kro trycatch me wrap kro ya promisses le lo dono me se ek na ek to koe lena hoga
