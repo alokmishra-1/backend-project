@@ -3,7 +3,8 @@ import {ApiError} from "../utils/ApiError.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import { User } from "../models/user.model.js";
-import jwt from "jsonwebtoken "
+import jwt from "jsonwebtoken"
+import mongoose from "mongoose";
 import { application, response } from "express";
 
 const generateAccessAndRefereshTokens = async(userId) => {
@@ -110,7 +111,7 @@ const loginUser = asyncHandler(async (req,res) => {
 
     const {email, username, password} = req.body
 
-    if (!(username || !email)) {
+    if (!(username || email)) {
         throw new ApiError(400,"username or email is required")        
     }
 
@@ -156,8 +157,8 @@ const logoutUser = asyncHandler(async(req,res) =>{
     await User.findByIdAndUpdate(
         req.user._id,
         {
-            $set: {
-                refereshToken: undefined
+            $unset: {
+                refereshToken: 1 // this removes the field from document
             }
         },
         {
@@ -339,8 +340,10 @@ const getUserChannelProfile = asyncHandler(async(req,res) =>{
         {
             $match:{
                 username:username?.toLowerCase()
-            },
-            $lookup:{
+            }
+        },
+        {
+                $lookup:{
                 from: "subscriptions",
                 localField: "_id",
                 foreignField: "channel",
@@ -415,6 +418,7 @@ const getWatchHistory = asyncHandler(async(req,res) =>{
                         $lookup:{
                             from:"users",
                             localField:"owner",
+                            foreignField: "_id",
                             as: "owner",
                             pipeline: [
                                 {
@@ -430,7 +434,7 @@ const getWatchHistory = asyncHandler(async(req,res) =>{
                     {
                         $addFields:{
                             owner:{
-                                $first:"$onwer"
+                                $first:"$owner"
                             }
                         }
                     }
@@ -444,13 +448,14 @@ const getWatchHistory = asyncHandler(async(req,res) =>{
     .json(
         new ApiResponse(
             200,
-            user[0].WatchHistory, 
+            user[0].watchHistory, 
             "Watch History feteched Successfully"
         )
     )
 })
 
-export {registerUser,
+export {
+    registerUser,
     loginUser,
     logoutUser,
     refreshAccessToken,
